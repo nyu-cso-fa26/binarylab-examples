@@ -4,7 +4,7 @@
 # Ubuntu 24.04 GCC 13.3, -Og, no frame pointer, no stack protector, non-PIE.
 #
 # Target x86-64 Linux.  On an Apple-silicon Mac use an Ubuntu 24.04 image
-# (cso_x86:gcc13 = ubuntu:24.04 + gcc, built locally; the lab images are 22.04/gcc 11):
+# (cso_x86:gcc13 = ubuntu:24.04 + gcc 13.3, built locally; matches binarylab's sol objects):
 #   make CC="docker run --rm --platform linux/amd64 -v $$PWD:/src -w /src cso_x86:gcc13 gcc"
 
 CC       = gcc
@@ -35,6 +35,7 @@ disas: mystery1-sol.o mystery2-sol.o mystery3-sol.o
 	$(OBJDUMP) -d $<
 
 clean:
-	rm -f mystery $(OBJS) mystery1.s mystery2.s mystery3.s
+	# keep provided artifacts (main.o, *-sol.o, mystery-sol); only remove student-rebuildable files
+	rm -f mystery mystery1.o mystery2.o mystery3.o mystery1.s mystery2.s mystery3.s
 
 .PHONY: all disas clean
