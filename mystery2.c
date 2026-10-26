@@ -1,0 +1,3 @@
+void mystery2()
+{
+}
