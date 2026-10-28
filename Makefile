@@ -8,20 +8,23 @@
 #   make CC="docker run --rm --platform linux/amd64 -v $$PWD:/src -w /src cso_x86:gcc13 gcc"
 
 CC       = gcc
-CFLAGS   = -Werror -Og -std=gnu11 -fomit-frame-pointer -fno-stack-protector
+CFLAGS := -Og -g -std=gnu11 -fomit-frame-pointer -fno-stack-protector -fcf-protection=none
 LDFLAGS  = -no-pie
 OBJDUMP ?= objdump
 
 OBJS = main.o mystery1.o mystery2.o mystery3.o
 SOL_OBJS = main.o mystery1-sol.o mystery2-sol.o mystery3-sol.o
 
-all: mystery mystery-sol
+all: mystery mystery-sol exampleoverflow
 
 mystery: $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS)
 
 mystery-sol: $(SOL_OBJS)
 	$(CC) $(LDFLAGS) -o $@ $(SOL_OBJS)
+
+exampleoverflow: exampleoverflow.o
+	$(CC) $(LDFLAGS) $^ -o $@
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
@@ -36,6 +39,7 @@ disas: mystery1-sol.o mystery2-sol.o mystery3-sol.o
 
 clean:
 	# keep provided artifacts (main.o, *-sol.o, mystery-sol); only remove student-rebuildable files
-	rm -f mystery mystery1.o mystery2.o mystery3.o mystery1.s mystery2.s mystery3.s
+	rm -f mystery mystery1.o mystery2.o mystery3.o mystery1.s mystery2.s mystery3.s \
+	      exampleoverflow exampleoverflow.o
 
 .PHONY: all disas clean
